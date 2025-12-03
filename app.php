@@ -82,6 +82,58 @@ function day2()
     return $output;
 }
 
+function day2_2()
+{
+    $invalid = [];
+
+    //$fp = fopen("input/2.txt", "r");
+    $fp = file_get_contents("input/2.txt", "r");
+
+    $ranges = explode(",", $fp);
+
+    foreach ($ranges as $range) {
+        $fl = explode('-', $range);
+        $start = $fl[0];
+        $end = $fl[1];
+
+        while ($start <= $end) {
+            $len = strlen($start);
+
+            for ($i = 1; $i <= $len / 2; $i++) {
+
+                if ($len % $i != 0) {
+                    continue;
+                }
+
+                $parts = [];
+
+                for ($j = 0; $j < $len; $j += $i) {
+                    $parts[] = substr($start, $j, $i);
+                }
+
+                $equal = true;
+                foreach ($parts as $part) {
+                    if ($part != $parts[0]) {
+                        $equal = false;
+                        break;
+                    }
+                }
+
+                if ($equal) {
+                    $invalid[] = $start;
+                }
+            }
+
+            $start++;
+        }
+    }
+
+    $invalid = array_unique($invalid);
+    $output = array_sum($invalid);
+
+    return $output;
+}
+
 $answer = day1();
 echo $answer . PHP_EOL;
 
@@ -93,4 +145,9 @@ echo $answer . PHP_EOL;
 echo PHP_EOL;
 
 $answer = day2();
+echo $answer . PHP_EOL;
+
+echo PHP_EOL;
+
+$answer = day2_2();
 echo $answer . PHP_EOL;
