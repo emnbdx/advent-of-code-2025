@@ -47,6 +47,40 @@ function day1($countAll = false)
     return $password;
 }
 
+function day2()
+{
+    $output = 0;
+
+    //$fp = fopen("input/2.txt", "r");
+    $fp = file_get_contents("input/2.txt", "r");
+
+    $ranges = explode(",", $fp);
+
+    foreach ($ranges as $range) {
+        $fl = explode('-', $range);
+        $start = $fl[0];
+        $end = $fl[1];
+
+        while ($start <= $end) {
+            $len = strlen($start);
+            if ($len % 2 != 0) {
+                $start++;
+                continue;
+            }
+
+            $first = substr($start, 0, $len / 2);
+            $second = substr($start, $len / 2, $len / 2);
+
+            if ($first == $second) {
+                $output += $start;
+            }
+
+            $start++;
+        }
+    }
+
+    return $output;
+}
 
 $answer = day1();
 echo $answer . PHP_EOL;
@@ -54,4 +88,9 @@ echo $answer . PHP_EOL;
 echo PHP_EOL;
 
 $answer = day1(true);
+echo $answer . PHP_EOL;
+
+echo PHP_EOL;
+
+$answer = day2();
 echo $answer . PHP_EOL;
