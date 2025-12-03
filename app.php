@@ -1,6 +1,6 @@
 <?php
 
-function day1_1()
+function day1($countAll = false)
 {
     $init = 50;
     $password = 0;
@@ -12,13 +12,18 @@ function day1_1()
         $direction = substr($buffer, 0, 1);
         $steps = substr($buffer, 1);
 
-        if ($steps < 100 || $steps > 100) {
+        if ($steps > 100) {
+            if ($countAll) {
+                $password += floor($steps / 100);
+            }
             $steps = $steps % 100;
-            $password += floor($steps / 100);
         }
 
         if ($direction == "L") {
             if ($init - $steps < 0) {
+                if ($countAll && $init != 0) {
+                    $password++;
+                }
                 $init = 100 - ($steps - $init);
             } else {
                 $init -= $steps;
@@ -26,6 +31,9 @@ function day1_1()
         } else if ($direction == "R") {
             if ($init + $steps >= 100) {
                 $init = $steps + $init - 100;
+                if ($countAll && $init != 0) {
+                    $password++;
+                }
             } else {
                 $init += $steps;
             }
@@ -40,5 +48,10 @@ function day1_1()
 }
 
 
-$answer = day1_1();
+$answer = day1();
+echo $answer . PHP_EOL;
+
+echo PHP_EOL;
+
+$answer = day1(true);
 echo $answer . PHP_EOL;
