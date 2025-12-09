@@ -134,25 +134,33 @@ function day2_2()
     return $output;
 }
 
-function day3()
+function day3($digits = 2)
 {
-    $joltage = 0;
+    $result = 0;
     $fp = fopen("input/3.txt", "r");
 
     while (($buffer = fgets($fp)) !== false) {
-        $batteries = str_split($buffer);
+        $buffer = trim($buffer);
+        $len = strlen($buffer);
 
-        $max = 0;
-        for ($i = 0; $i < count($batteries); $i++) {
-            for ($j = $i + 1; $j < count($batteries) - 1; $j++) {
-                $max = max($max, 10 * $batteries[$i] + $batteries[$j]);
-            }
+        $joltages = [];
+
+        $maxIndex = 0;
+
+        while (count($joltages) < $digits) {
+            $subset = substr($buffer, $maxIndex, $len - $maxIndex - ($digits - count($joltages)) + 1);
+            $batteries = str_split($subset);
+
+            $maxValue = max($batteries);
+            $maxIndex = array_search($maxValue, $batteries) + 1 + $maxIndex;
+            $joltages[] = $maxValue;
         }
 
-        $joltage += $max;
+        $tmp = implode('', $joltages);
+        $result += $tmp;
     }
 
-    return $joltage;
+    return $result;
 }
 
 $answer = day1();
@@ -176,4 +184,9 @@ echo $answer . PHP_EOL;
 echo PHP_EOL;
 
 $answer = day3();
+echo $answer . PHP_EOL;
+
+echo PHP_EOL;
+
+$answer = day3(12);
 echo $answer . PHP_EOL;
