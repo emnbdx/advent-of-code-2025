@@ -163,6 +163,60 @@ function day3($digits = 2)
     return $result;
 }
 
+function day4()
+{
+    $fp = fopen("input/4.txt", "r");
+
+    $rolls = 0;
+    $line = 0;
+    $printingDepartment = [[], []];
+
+    while (($buffer = fgets($fp)) !== false) {
+        $buffer = trim($buffer);
+
+        $printingDepartment[$line] = str_split($buffer);
+        $line++;
+    }
+
+    for ($i = 0; $i < count($printingDepartment); $i++) {
+        for ($j = 0; $j < count($printingDepartment[0]); $j++) {
+            $current = $printingDepartment[$i][$j];
+
+            $tmp = 0;
+            if ($i >= 1) {
+                $printingDepartment[$i - 1][$j] == '@' ? $tmp++ : 0;
+            }
+            if ($i >= 1 && $j < count($printingDepartment[0]) - 1) {
+                $printingDepartment[$i - 1][$j + 1] == '@' ? $tmp++ : 0;
+            }
+            if ($j < count($printingDepartment[0]) - 1) {
+                $printingDepartment[$i][$j + 1] == '@' ? $tmp++ : 0;
+            }
+            if ($i < count($printingDepartment) - 1 && $j < count($printingDepartment[0]) - 1) {
+                $printingDepartment[$i + 1][$j + 1] == '@' ? $tmp++ : 0;
+            }
+            if ($i < count($printingDepartment) - 1) {
+                $printingDepartment[$i + 1][$j] == '@' ? $tmp++ : 0;
+            }
+            if ($i < count($printingDepartment) - 1 && $j >= 1) {
+                $printingDepartment[$i + 1][$j - 1] == '@' ? $tmp++ : 0;
+            }
+            if ($j >= 1) {
+                $printingDepartment[$i][$j - 1] == '@' ? $tmp++ : 0;
+            }
+            if ($i >= 1 && $j >= 1) {
+                $printingDepartment[$i - 1][$j - 1] == '@' ? $tmp++ : 0;
+            }
+
+            if ($current == '@' && $tmp < 4) {
+                $rolls++;
+            }
+        }
+    }
+
+    return $rolls;
+}
+
 $answer = day1();
 echo $answer . PHP_EOL;
 
@@ -189,4 +243,7 @@ echo $answer . PHP_EOL;
 echo PHP_EOL;
 
 $answer = day3(12);
+echo $answer . PHP_EOL;
+
+$answer = day4();
 echo $answer . PHP_EOL;
