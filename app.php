@@ -1,269 +1,275 @@
 <?php
 
-function day1($countAll = false)
+class Aoc2025
 {
-    $init = 50;
-    $password = 0;
+    function day1($countAll = false)
+    {
+        $init = 50;
+        $password = 0;
 
-    $fp = fopen("input/1.txt", "r");
+        $fp = fopen("input/1.txt", "r");
 
-    while (($buffer = fgets($fp)) !== false) {
+        while (($buffer = fgets($fp)) !== false) {
 
-        $direction = substr($buffer, 0, 1);
-        $steps = substr($buffer, 1);
+            $direction = substr($buffer, 0, 1);
+            $steps = substr($buffer, 1);
 
-        if ($steps > 100) {
-            if ($countAll) {
-                $password += floor($steps / 100);
-            }
-            $steps = $steps % 100;
-        }
-
-        if ($direction == "L") {
-            if ($init - $steps < 0) {
-                if ($countAll && $init != 0) {
-                    $password++;
+            if ($steps > 100) {
+                if ($countAll) {
+                    $password += floor($steps / 100);
                 }
-                $init = 100 - ($steps - $init);
-            } else {
-                $init -= $steps;
+                $steps = $steps % 100;
             }
-        } else if ($direction == "R") {
-            if ($init + $steps >= 100) {
-                $init = $steps + $init - 100;
-                if ($countAll && $init != 0) {
-                    $password++;
+
+            if ($direction == "L") {
+                if ($init - $steps < 0) {
+                    if ($countAll && $init != 0) {
+                        $password++;
+                    }
+                    $init = 100 - ($steps - $init);
+                } else {
+                    $init -= $steps;
                 }
-            } else {
-                $init += $steps;
+            } else if ($direction == "R") {
+                if ($init + $steps >= 100) {
+                    $init = $steps + $init - 100;
+                    if ($countAll && $init != 0) {
+                        $password++;
+                    }
+                } else {
+                    $init += $steps;
+                }
+            }
+
+            if ($init == 0) {
+                $password++;
             }
         }
 
-        if ($init == 0) {
-            $password++;
-        }
+        return $password;
     }
 
-    return $password;
-}
+    function day2()
+    {
+        $output = 0;
 
-function day2()
-{
-    $output = 0;
+        //$fp = fopen("input/2.txt", "r");
+        $fp = file_get_contents("input/2.txt", "r");
 
-    //$fp = fopen("input/2.txt", "r");
-    $fp = file_get_contents("input/2.txt", "r");
+        $ranges = explode(",", $fp);
 
-    $ranges = explode(",", $fp);
+        foreach ($ranges as $range) {
+            $fl = explode('-', $range);
+            $start = $fl[0];
+            $end = $fl[1];
 
-    foreach ($ranges as $range) {
-        $fl = explode('-', $range);
-        $start = $fl[0];
-        $end = $fl[1];
-
-        while ($start <= $end) {
-            $len = strlen($start);
-            if ($len % 2 != 0) {
-                $start++;
-                continue;
-            }
-
-            $first = substr($start, 0, $len / 2);
-            $second = substr($start, $len / 2, $len / 2);
-
-            if ($first == $second) {
-                $output += $start;
-            }
-
-            $start++;
-        }
-    }
-
-    return $output;
-}
-
-function day2_2()
-{
-    $invalid = [];
-
-    //$fp = fopen("input/2.txt", "r");
-    $fp = file_get_contents("input/2.txt", "r");
-
-    $ranges = explode(",", $fp);
-
-    foreach ($ranges as $range) {
-        $fl = explode('-', $range);
-        $start = $fl[0];
-        $end = $fl[1];
-
-        while ($start <= $end) {
-            $len = strlen($start);
-
-            for ($i = 1; $i <= $len / 2; $i++) {
-
-                if ($len % $i != 0) {
+            while ($start <= $end) {
+                $len = strlen($start);
+                if ($len % 2 != 0) {
+                    $start++;
                     continue;
                 }
 
-                $parts = [];
+                $first = substr($start, 0, $len / 2);
+                $second = substr($start, $len / 2, $len / 2);
 
-                for ($j = 0; $j < $len; $j += $i) {
-                    $parts[] = substr($start, $j, $i);
+                if ($first == $second) {
+                    $output += $start;
                 }
 
-                $equal = true;
-                foreach ($parts as $part) {
-                    if ($part != $parts[0]) {
-                        $equal = false;
-                        break;
+                $start++;
+            }
+        }
+
+        return $output;
+    }
+
+    function day2_2()
+    {
+        $invalid = [];
+
+        //$fp = fopen("input/2.txt", "r");
+        $fp = file_get_contents("input/2.txt", "r");
+
+        $ranges = explode(",", $fp);
+
+        foreach ($ranges as $range) {
+            $fl = explode('-', $range);
+            $start = $fl[0];
+            $end = $fl[1];
+
+            while ($start <= $end) {
+                $len = strlen($start);
+
+                for ($i = 1; $i <= $len / 2; $i++) {
+
+                    if ($len % $i != 0) {
+                        continue;
+                    }
+
+                    $parts = [];
+
+                    for ($j = 0; $j < $len; $j += $i) {
+                        $parts[] = substr($start, $j, $i);
+                    }
+
+                    $equal = true;
+                    foreach ($parts as $part) {
+                        if ($part != $parts[0]) {
+                            $equal = false;
+                            break;
+                        }
+                    }
+
+                    if ($equal) {
+                        $invalid[] = $start;
                     }
                 }
 
-                if ($equal) {
-                    $invalid[] = $start;
-                }
-            }
-
-            $start++;
-        }
-    }
-
-    $invalid = array_unique($invalid);
-    $output = array_sum($invalid);
-
-    return $output;
-}
-
-function day3($digits = 2)
-{
-    $result = 0;
-    $fp = fopen("input/3.txt", "r");
-
-    while (($buffer = fgets($fp)) !== false) {
-        $buffer = trim($buffer);
-        $len = strlen($buffer);
-
-        $joltages = [];
-
-        $maxIndex = 0;
-
-        while (count($joltages) < $digits) {
-            $subset = substr($buffer, $maxIndex, $len - $maxIndex - ($digits - count($joltages)) + 1);
-            $batteries = str_split($subset);
-
-            $maxValue = max($batteries);
-            $maxIndex = array_search($maxValue, $batteries) + 1 + $maxIndex;
-            $joltages[] = $maxValue;
-        }
-
-        $tmp = implode('', $joltages);
-        $result += $tmp;
-    }
-
-    return $result;
-}
-
-function day4($reapeat = false)
-{
-    $fp = fopen("input/4.txt", "r");
-
-    $rolls = 0;
-    $line = 0;
-    $printingDepartment = [[], []];
-
-    while (($buffer = fgets($fp)) !== false) {
-        $buffer = trim($buffer);
-
-        $printingDepartment[$line] = str_split($buffer);
-        $line++;
-    }
-
-    $removed = true;
-    while ($removed) {
-        $clone = $printingDepartment;
-
-        for ($i = 0; $i < count($printingDepartment); $i++) {
-            for ($j = 0; $j < count($printingDepartment[0]); $j++) {
-                $current = $printingDepartment[$i][$j];
-
-                $tmp = 0;
-                if ($i >= 1) {
-                    $printingDepartment[$i - 1][$j] == '@' ? $tmp++ : 0;
-                }
-                if ($i >= 1 && $j < count($printingDepartment[0]) - 1) {
-                    $printingDepartment[$i - 1][$j + 1] == '@' ? $tmp++ : 0;
-                }
-                if ($j < count($printingDepartment[0]) - 1) {
-                    $printingDepartment[$i][$j + 1] == '@' ? $tmp++ : 0;
-                }
-                if ($i < count($printingDepartment) - 1 && $j < count($printingDepartment[0]) - 1) {
-                    $printingDepartment[$i + 1][$j + 1] == '@' ? $tmp++ : 0;
-                }
-                if ($i < count($printingDepartment) - 1) {
-                    $printingDepartment[$i + 1][$j] == '@' ? $tmp++ : 0;
-                }
-                if ($i < count($printingDepartment) - 1 && $j >= 1) {
-                    $printingDepartment[$i + 1][$j - 1] == '@' ? $tmp++ : 0;
-                }
-                if ($j >= 1) {
-                    $printingDepartment[$i][$j - 1] == '@' ? $tmp++ : 0;
-                }
-                if ($i >= 1 && $j >= 1) {
-                    $printingDepartment[$i - 1][$j - 1] == '@' ? $tmp++ : 0;
-                }
-
-                if ($current == '@' && $tmp < 4) {
-                    $rolls++;
-                    $clone[$i][$j] = 'x';
-                }
+                $start++;
             }
         }
 
-        if ($reapeat && $printingDepartment != $clone) {
-            $printingDepartment = $clone;
-            $clone = null;
-        } else {
-            $removed = false;
-        }
+        $invalid = array_unique($invalid);
+        $output = array_sum($invalid);
+
+        return $output;
     }
 
-    return $rolls;
+    function day3($digits = 2)
+    {
+        $result = 0;
+        $fp = fopen("input/3.txt", "r");
+
+        while (($buffer = fgets($fp)) !== false) {
+            $buffer = trim($buffer);
+            $len = strlen($buffer);
+
+            $joltages = [];
+
+            $maxIndex = 0;
+
+            while (count($joltages) < $digits) {
+                $subset = substr($buffer, $maxIndex, $len - $maxIndex - ($digits - count($joltages)) + 1);
+                $batteries = str_split($subset);
+
+                $maxValue = max($batteries);
+                $maxIndex = array_search($maxValue, $batteries) + 1 + $maxIndex;
+                $joltages[] = $maxValue;
+            }
+
+            $tmp = implode('', $joltages);
+            $result += $tmp;
+        }
+
+        return $result;
+    }
+
+    function day4($reapeat = false)
+    {
+        $fp = fopen("input/4.txt", "r");
+
+        $rolls = 0;
+        $line = 0;
+        $printingDepartment = [[], []];
+
+        while (($buffer = fgets($fp)) !== false) {
+            $buffer = trim($buffer);
+
+            $printingDepartment[$line] = str_split($buffer);
+            $line++;
+        }
+
+        $removed = true;
+        while ($removed) {
+            $clone = $printingDepartment;
+
+            for ($i = 0; $i < count($printingDepartment); $i++) {
+                for ($j = 0; $j < count($printingDepartment[0]); $j++) {
+                    $current = $printingDepartment[$i][$j];
+
+                    $tmp = 0;
+                    if ($i >= 1) {
+                        $printingDepartment[$i - 1][$j] == '@' ? $tmp++ : 0;
+                    }
+                    if ($i >= 1 && $j < count($printingDepartment[0]) - 1) {
+                        $printingDepartment[$i - 1][$j + 1] == '@' ? $tmp++ : 0;
+                    }
+                    if ($j < count($printingDepartment[0]) - 1) {
+                        $printingDepartment[$i][$j + 1] == '@' ? $tmp++ : 0;
+                    }
+                    if ($i < count($printingDepartment) - 1 && $j < count($printingDepartment[0]) - 1) {
+                        $printingDepartment[$i + 1][$j + 1] == '@' ? $tmp++ : 0;
+                    }
+                    if ($i < count($printingDepartment) - 1) {
+                        $printingDepartment[$i + 1][$j] == '@' ? $tmp++ : 0;
+                    }
+                    if ($i < count($printingDepartment) - 1 && $j >= 1) {
+                        $printingDepartment[$i + 1][$j - 1] == '@' ? $tmp++ : 0;
+                    }
+                    if ($j >= 1) {
+                        $printingDepartment[$i][$j - 1] == '@' ? $tmp++ : 0;
+                    }
+                    if ($i >= 1 && $j >= 1) {
+                        $printingDepartment[$i - 1][$j - 1] == '@' ? $tmp++ : 0;
+                    }
+
+                    if ($current == '@' && $tmp < 4) {
+                        $rolls++;
+                        $clone[$i][$j] = 'x';
+                    }
+                }
+            }
+
+            if ($reapeat && $printingDepartment != $clone) {
+                $printingDepartment = $clone;
+                $clone = null;
+            } else {
+                $removed = false;
+            }
+        }
+
+        return $rolls;
+    }
+
+    function day5()
+    {
+        $fp = fopen("input/5.txt", "r");
+
+        $ranges = [];
+        $ids = [];
+        $output = 0;
+
+        while (($buffer = fgets($fp)) !== false) {
+            $buffer = trim($buffer);
+
+            if (strpos($buffer, '-') !== false) {
+                $ranges[] = explode('-', $buffer);
+            } else if ($buffer !== '') {
+                $ids[] = $buffer;
+            }
+        }
+
+        foreach ($ids as $id) {
+            foreach ($ranges as $range) {
+
+                if ($id >= $range[0] && $id <= $range[1]) {
+                    $output++;
+                    break;
+                }
+            }
+        }
+
+        return $output;
+    }
 }
 
-$answer = day1();
-echo $answer . PHP_EOL;
+$currentDay = 5;
+$currentStep = null;
 
-echo PHP_EOL;
-
-$answer = day1(true);
-echo $answer . PHP_EOL;
-
-echo PHP_EOL;
-
-$answer = day2();
-echo $answer . PHP_EOL;
-
-echo PHP_EOL;
-
-$answer = day2_2();
-echo $answer . PHP_EOL;
-
-echo PHP_EOL;
-
-$answer = day3();
-echo $answer . PHP_EOL;
-
-echo PHP_EOL;
-
-$answer = day3(12);
-echo $answer . PHP_EOL;
-
-echo PHP_EOL;
-
-$answer = day4();
-echo $answer . PHP_EOL;
-
-echo PHP_EOL;
-
-$answer = day4(true);
-echo $answer . PHP_EOL;
+$methodName = "day{$currentDay}";
+if ($currentStep !== null) {
+    $methodName .= "_" . $currentStep;
+}
+$reflectionMethod = new ReflectionMethod("Aoc2025", "$methodName");
+echo $reflectionMethod->invoke(new Aoc2025(), true) . PHP_EOL;
