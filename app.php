@@ -163,7 +163,7 @@ function day3($digits = 2)
     return $result;
 }
 
-function day4()
+function day4($reapeat = false)
 {
     $fp = fopen("input/4.txt", "r");
 
@@ -178,39 +178,52 @@ function day4()
         $line++;
     }
 
-    for ($i = 0; $i < count($printingDepartment); $i++) {
-        for ($j = 0; $j < count($printingDepartment[0]); $j++) {
-            $current = $printingDepartment[$i][$j];
+    $removed = true;
+    while ($removed) {
+        $clone = $printingDepartment;
 
-            $tmp = 0;
-            if ($i >= 1) {
-                $printingDepartment[$i - 1][$j] == '@' ? $tmp++ : 0;
-            }
-            if ($i >= 1 && $j < count($printingDepartment[0]) - 1) {
-                $printingDepartment[$i - 1][$j + 1] == '@' ? $tmp++ : 0;
-            }
-            if ($j < count($printingDepartment[0]) - 1) {
-                $printingDepartment[$i][$j + 1] == '@' ? $tmp++ : 0;
-            }
-            if ($i < count($printingDepartment) - 1 && $j < count($printingDepartment[0]) - 1) {
-                $printingDepartment[$i + 1][$j + 1] == '@' ? $tmp++ : 0;
-            }
-            if ($i < count($printingDepartment) - 1) {
-                $printingDepartment[$i + 1][$j] == '@' ? $tmp++ : 0;
-            }
-            if ($i < count($printingDepartment) - 1 && $j >= 1) {
-                $printingDepartment[$i + 1][$j - 1] == '@' ? $tmp++ : 0;
-            }
-            if ($j >= 1) {
-                $printingDepartment[$i][$j - 1] == '@' ? $tmp++ : 0;
-            }
-            if ($i >= 1 && $j >= 1) {
-                $printingDepartment[$i - 1][$j - 1] == '@' ? $tmp++ : 0;
-            }
+        for ($i = 0; $i < count($printingDepartment); $i++) {
+            for ($j = 0; $j < count($printingDepartment[0]); $j++) {
+                $current = $printingDepartment[$i][$j];
 
-            if ($current == '@' && $tmp < 4) {
-                $rolls++;
+                $tmp = 0;
+                if ($i >= 1) {
+                    $printingDepartment[$i - 1][$j] == '@' ? $tmp++ : 0;
+                }
+                if ($i >= 1 && $j < count($printingDepartment[0]) - 1) {
+                    $printingDepartment[$i - 1][$j + 1] == '@' ? $tmp++ : 0;
+                }
+                if ($j < count($printingDepartment[0]) - 1) {
+                    $printingDepartment[$i][$j + 1] == '@' ? $tmp++ : 0;
+                }
+                if ($i < count($printingDepartment) - 1 && $j < count($printingDepartment[0]) - 1) {
+                    $printingDepartment[$i + 1][$j + 1] == '@' ? $tmp++ : 0;
+                }
+                if ($i < count($printingDepartment) - 1) {
+                    $printingDepartment[$i + 1][$j] == '@' ? $tmp++ : 0;
+                }
+                if ($i < count($printingDepartment) - 1 && $j >= 1) {
+                    $printingDepartment[$i + 1][$j - 1] == '@' ? $tmp++ : 0;
+                }
+                if ($j >= 1) {
+                    $printingDepartment[$i][$j - 1] == '@' ? $tmp++ : 0;
+                }
+                if ($i >= 1 && $j >= 1) {
+                    $printingDepartment[$i - 1][$j - 1] == '@' ? $tmp++ : 0;
+                }
+
+                if ($current == '@' && $tmp < 4) {
+                    $rolls++;
+                    $clone[$i][$j] = 'x';
+                }
             }
+        }
+
+        if ($reapeat && $printingDepartment != $clone) {
+            $printingDepartment = $clone;
+            $clone = null;
+        } else {
+            $removed = false;
         }
     }
 
@@ -245,5 +258,12 @@ echo PHP_EOL;
 $answer = day3(12);
 echo $answer . PHP_EOL;
 
+echo PHP_EOL;
+
 $answer = day4();
+echo $answer . PHP_EOL;
+
+echo PHP_EOL;
+
+$answer = day4(true);
 echo $answer . PHP_EOL;
